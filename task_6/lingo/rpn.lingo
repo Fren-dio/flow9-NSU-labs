@@ -1,0 +1,8 @@
+exp = rpnToken+:t {parserFromRPNToString(:t)};
+
+rpnToken = ws int:e ws {:e} | ws '+' ws {AddToken()} | ws '*' ws {MulToken()};
+int = digit+$d {IntToken(s2i($d))};
+
+ws = s*;
+s = " " | "\t" | "\n";
+digit = '0'-'9';
