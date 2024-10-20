@@ -1,0 +1,50 @@
+// Реализуйте PEG-парсер для грамматики простых арифметических выражений (целые константы, операции + и *), 
+// который порождает дерево синтаксического разбора. Используйте библиотеку lingo. Преобразуйте дерево обратно 
+// в строку. Реализуйте калькулятор, вычисляющий значение арифметического выражения. 
+
+
+import lib/runtime;
+import lib/lingo/pegcode/driver;
+import lib/string;
+
+//flow structures defined like this in a flow file
+Exp ::= Add, Mul, Int;
+    Add : (e1 : Exp, e2 : Exp);
+    Mul : (e1 : Exp, e2 : Exp);
+    Int : (e : int);
+
+
+getValue(e: Exp) -> int {
+    switch(e) {
+        Add(e1, e2): getValue(e1) + getValue(e2);
+        Mul(e1, e2): getValue(e1) * getValue(e2);
+        Int(i): i;
+    }
+}
+
+
+
+grammar = compilePegGrammar("#include .\labs_NSU\module_2\task_5\lingo\task_5.lingo");
+
+main() {
+
+     inputData: [Pair<string, int>] = [ Pair(" 1 + 2 ", 3),
+        Pair(" 1 + 2 + 3 ", 6),
+        Pair(" 1 + 2 + 3 + 4 ", 10),
+        Pair(" ( 1 + 2 ) ", 3),
+        Pair(" ( 1 + 2 ) + 3 ", 6),
+        Pair(" 1 * 2 ", 2),
+        Pair(" 1 * 2 * 3 ", 6),
+        Pair(" 1 * 2 + 3 * 4 ", 14),
+        Pair(" ( 1 + 2 * 4 ) ", 9),
+        Pair(" ( 1 + 2 ) * 3 ", 9),
+        Pair(" ( 1 * 2 ) + 3 ", 5)];
+   
+    leng = length(inputData) - 1;
+    fori(0, leng, \i -> { println(inputData[i].first + " = " + 
+                    i2s(getValue(parsic(grammar, inputData[i].first, defaultPegActions))) + 
+                    "    ---    Correct result: " + i2s(inputData[i].second) + "\n");
+
+    });
+
+}
