@@ -23,8 +23,17 @@ getValue(e: Exp) -> int {
 }
 
 
+convertTreeToString(syntaxTree : flow) -> string {
+    switch(syntaxTree) {
+        Add(e1, e2): "(" + convertTreeToString(e1) + "+" + convertTreeToString(e2) + ")";
+        Mul(e1, e2): "(" + convertTreeToString(e1) + "*" + convertTreeToString(e2) + ")";
+        Int(i): i2s(i);
+    }
+}
 
-grammar = compilePegGrammar("#include .\labs_NSU\module_2\task_5\lingo\task_5.lingo");
+
+
+grammar = compilePegGrammar("#include C:\Users\kulma\gitRepository\test\flow9\labs_NSU\module_2\task_5\lingo\task_5.lingo");
 
 main() {
 
@@ -41,8 +50,13 @@ main() {
         Pair(" ( 1 * 2 ) + 3 ", 5)];
    
     leng = length(inputData) - 1;
-    fori(0, leng, \i -> { println(inputData[i].first + " = " + 
-                    i2s(getValue(parsic(grammar, inputData[i].first, defaultPegActions))) + 
+    fori(0, leng, \i -> { 
+        syntaxTree : flow = parsic(grammar, inputData[i].first, defaultPegActions);
+        println("syntax Tree after parsic():" );
+        println(syntaxTree);
+        println("syntax Tree after convert to string:" );
+        println(convertTreeToString(syntaxTree));
+        println(inputData[i].first + " = " + i2s(getValue(syntaxTree)) + 
                     "    ---    Correct result: " + i2s(inputData[i].second) + "\n");
 
     });

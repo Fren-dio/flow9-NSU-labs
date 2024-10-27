@@ -18,6 +18,7 @@ standartGrammar = compilePegGrammar("#include .\labs_NSU\module_2\task_6\lingo\a
 rpnGrammar = compilePegGrammar("#include .\labs_NSU\module_2\task_6\lingo\rpn.lingo");
 
 
+// convert fro rpn to normal
 processRPNToken(resultExpArray: [Exp], token: rpnToken) -> [Exp] {
     switch(token) {
         AddToken(): {
@@ -34,6 +35,16 @@ processRPNToken(resultExpArray: [Exp], token: rpnToken) -> [Exp] {
         }
         IntToken(i): arrayPush(resultExpArray, Int(i));
     } 
+}
+
+
+// convert from normal to rpn
+convertToRPN(e: Exp) -> string {
+    switch(e) {
+        Add(e1, e2): convertToRPN(e1) + " " + convertToRPN(e2) + " + ";
+        Mul(e1, e2): convertToRPN(e1) + " " + convertToRPN(e2) + " * ";
+        Int(i): i2s(i);
+    }
 }
 
 
@@ -85,15 +96,19 @@ main() {
     leng = length(inputData) - 1;
     fori(0, leng, \i -> 
     { 
+        println("input: " + inputData[i].first);
         // convert to rpn grammar view 
         // example: "1+2+3 -> Add(Add(Int(1), Int(2)), Int(3))"
         rpnException = parsic(rpnGrammar, inputData[i].first, specialPegActions);
+        println("syntax Tree after parsic():" );
         println(rpnException);
         
         arithmString = convertToArithmeticView(parsic(rpnGrammar, inputData[i].first, specialPegActions));
         println(arithmString + " = " + i2s(getValue(parsic(standartGrammar, arithmString, defaultPegActions))) + 
-                    "    ---    Correct result: " + i2s(inputData[i].second) + "\n");
+                    "    ---    Correct result: " + i2s(inputData[i].second));
 
+        println("convert to RPN view: " + convertToRPN(parsic(rpnGrammar, inputData[i].first, specialPegActions)));
+        println("\n");
     });
 
 }
